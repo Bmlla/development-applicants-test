@@ -4,6 +4,6 @@ const weatherController = require('../controllers/weatherController')
 
 
 router.get('/now/:city', weatherController.get);
-router.get('/save', weatherController.save);
+router.post('/save_weather', weatherController.save_weather);
 
 module.exports = router;

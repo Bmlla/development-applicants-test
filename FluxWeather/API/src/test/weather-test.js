@@ -2,6 +2,7 @@ const assert  = require('chai')
 const request = require('request');
 const weather = require('../controllers/weatherController')
 const mongoose = require('mongoose');
+var Weather = require('../models/WeatherModel')
 
 
 /*it('API weather comunication', function(done) {
@@ -23,13 +24,38 @@ describe("Mongo Tests", () => {
   });
 
   it("Save to MongoDb", (done) => {
-    assert.expect(weather.save().to.equal(200));
-    done();
+      let saveTest;
+      const teste = {
+        body:{
+            city: "Itajaí, SC",
+            date: "19/05/2019",
+            description: "teste"
+        }
+      }
+      const weatherModel = new Weather(teste.body);
+    
+      weatherModel.save(err => {
+        saveTest = err
+      })
+
+      assert.expect(saveTest).to.equal(undefined);
+      done();
   });
 
-  it("Delete from Mongo", (done) => {
-    
-    assert.expect(weather.delete().to.equal(200));
+  it("Find and delete from Mongo", (done) => {
+    const weatherModel = new Weather();
+    let max;
+    let deleteTest;
+    Weather.findOne({ seq : 1 }).where({'last_mod': 1}).sort('-last_mod').exec( function(err, doc) {
+        if(!err)
+          max = doc.last_mod;
+    });
+
+    weatherModel.remove({ seq: max }, err => {
+      deleteTest = err;
+    })
+
+    assert.expect(deleteTest).to.equal(undefined);
     done();
   });
 });
